@@ -261,7 +261,5 @@ int main()
         cout << "set mode fail";
     }
 
-    
-    
     return 0;
 }
