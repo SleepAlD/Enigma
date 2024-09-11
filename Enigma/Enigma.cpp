@@ -211,7 +211,7 @@ static int Reflector(int key) {
 }
 
 //確認字元輸出範圍
-static char check_Range(char& Plaintext) {
+static char check_Range(char Plaintext) {
 
     if (Plaintext > 90) {
         Plaintext -= 26;
@@ -223,8 +223,18 @@ static char check_Range(char& Plaintext) {
     return Plaintext;
 }
 
+//字元交換
+static char plugboard_switch(char plug1, char plug2) {
+    char temp;
+    temp = plug1;
+    plug1 = plug2;
+    plug2 = temp;
+
+    return plug1;
+}
+
 //加密區域
-static string caesar_IN(string Plaintext, char key, char key2, char key3, char key4) {
+static string caesar_IN(string Plaintext, char key, char key2, char key3, char key4, char plug[2]) {
 
     //轉盤起始位置
     int key_to_Move = int(key);
@@ -232,8 +242,17 @@ static string caesar_IN(string Plaintext, char key, char key2, char key3, char k
     int key_to_Move_3 = int(key3);
     int key_to_Move_4 = int(key4);
 
+
+
     //轉換大寫
     for (int i = 0; i < Plaintext.length(); i++) {
+
+        if (Plaintext[i] == plug[0]) {
+            Plaintext[i] = plugboard_switch(Plaintext[i], plug[1]);
+        }
+        else if (Plaintext[i] == plug[1]) {
+            Plaintext[i] = plugboard_switch(Plaintext[i], plug[0]);
+        }
 
         if (Plaintext[i] >= 97 && Plaintext[i] <= 122) {
             Plaintext[i] -= 32;
@@ -248,37 +267,37 @@ static string caesar_IN(string Plaintext, char key, char key2, char key3, char k
 
             //使用轉子I 進行字元替換
             Plaintext[i] += Rotor_I(key_to_Move);
-            check_Range(Plaintext[i]);
-
+            Plaintext[i] = check_Range(Plaintext[i]);
+ 
             //使用轉子II 進行字元替換
             Plaintext[i] += Rotor_II(key_to_Move_2);
-            check_Range(Plaintext[i]);
-
+            Plaintext[i] = check_Range(Plaintext[i]);
+           
             //使用轉子III 進行字元替換
             Plaintext[i] += Rotor_III(key_to_Move_3);
-            check_Range(Plaintext[i]);
-
+            Plaintext[i] = check_Range(Plaintext[i]);
+            
             //使用轉子IV 進行字元替換
             Plaintext[i] += Rotor_IV(key_to_Move_4);
-            check_Range(Plaintext[i]);
-
+            Plaintext[i] = check_Range(Plaintext[i]);
+            
             //使用反射器進行第二階段
 
             //使用轉子IV 進行字元替換
             Plaintext[i] += Rotor_IV(Reflector(key_to_Move_4));
-            check_Range(Plaintext[i]);
-
+            Plaintext[i] = check_Range(Plaintext[i]);
+            
             //使用轉子III 進行字元替換
             Plaintext[i] += Rotor_III(Reflector(key_to_Move_3));
-            check_Range(Plaintext[i]);
-
+            Plaintext[i] = check_Range(Plaintext[i]);
+          
             //使用轉子II 進行字元替換
             Plaintext[i] += Rotor_II(Reflector(key_to_Move_2));
-            check_Range(Plaintext[i]);
-
+            Plaintext[i] = check_Range(Plaintext[i]);
+            
             //使用轉子I 進行字元替換
             Plaintext[i] += Rotor_I(Reflector(key_to_Move));
-            check_Range(Plaintext[i]);
+            Plaintext[i] = check_Range(Plaintext[i]);
             
         }
 
@@ -311,7 +330,7 @@ static string caesar_IN(string Plaintext, char key, char key2, char key3, char k
 }
 
 //解密區域
-static string caesar_OUT(string Plaintext, char key, char key2, char key3, char key4) {
+static string caesar_OUT(string Plaintext, char key, char key2, char key3, char key4, char plug[2]) {
 
     //轉盤起始位置
     int key_to_Move = int(key);
@@ -335,39 +354,47 @@ static string caesar_OUT(string Plaintext, char key, char key2, char key3, char 
 
             //使用轉子I 進行字元替換
             Plaintext[i] -= Rotor_I(key_to_Move);
-            check_Range(Plaintext[i]);
+            Plaintext[i] = check_Range(Plaintext[i]);
 
             //使用轉子II 進行字元替換
             Plaintext[i] -= Rotor_II(key_to_Move_2);
-            check_Range(Plaintext[i]);
+            Plaintext[i] = check_Range(Plaintext[i]);
 
             //使用轉子III 進行字元替換
             Plaintext[i] -= Rotor_III(key_to_Move_3);
-            check_Range(Plaintext[i]);
+            Plaintext[i] = check_Range(Plaintext[i]);
 
             //使用轉子IV 進行字元替換
             Plaintext[i] -= Rotor_IV(key_to_Move_4);
-            check_Range(Plaintext[i]);
+            Plaintext[i] = check_Range(Plaintext[i]);
 
             //使用反射器進行第二階段
 
             //使用轉子IV 進行字元替換
             Plaintext[i] -= Rotor_IV(Reflector(key_to_Move_4));
-            check_Range(Plaintext[i]);
+            Plaintext[i] = check_Range(Plaintext[i]);
 
             //使用轉子III 進行字元替換
             Plaintext[i] -= Rotor_III(Reflector(key_to_Move_3));
-            check_Range(Plaintext[i]);
+            Plaintext[i] = check_Range(Plaintext[i]);
 
             //使用轉子II 進行字元替換
             Plaintext[i] -= Rotor_II(Reflector(key_to_Move_2));
-            check_Range(Plaintext[i]);
+            Plaintext[i] = check_Range(Plaintext[i]);
 
             //使用轉子I 進行字元替換
             Plaintext[i] -= Rotor_I(Reflector(key_to_Move));
-            check_Range(Plaintext[i]);
+            Plaintext[i] = check_Range(Plaintext[i]);
 
         }
+
+        if (Plaintext[i] == (plug[0] - 32)) {
+            Plaintext[i] = plugboard_switch(Plaintext[i], (plug[1]-32));
+        }
+        else if (Plaintext[i] == (plug[1] - 32)) {
+            Plaintext[i] = plugboard_switch(Plaintext[i], (plug[0]-32));
+        }
+
 
         //轉盤I旋轉
         key_to_Move += 1;
@@ -401,6 +428,7 @@ int main() {
 
     string text;
     char key, key2, key3, key4, check_continue;
+    char plug[2];
     bool transfrom;
 
     do {
@@ -413,15 +441,16 @@ int main() {
         // 確認模式是否設定成功
         if (cin >> transfrom) {
 
-            // 設定轉盤初始值
-            cout << "Input the key1 (a ~ z): ";
+            // 設定加密轉盤初始值
+            cout << "Input the key (4 char): ";
             cin >> key;
-            cout << "Input the key2 (a ~ z): ";
             cin >> key2;
-            cout << "Input the key3 (a ~ z): ";
             cin >> key3;
-            cout << "Input the key4 (a ~ z): ";
             cin >> key4;
+
+            // 設定接線板數值
+            cout << "Two char on plugboard:";
+            cin >> plug[0] >> plug[1];
 
             // 清除 cin 目前緩衝區的內容
             cin.clear();
@@ -435,12 +464,12 @@ int main() {
             if (transfrom == false) {
                 // 執行加密
                 cout << endl << text << endl;
-                cout << caesar_IN(text, key, key2, key3, key4) << endl;
+                cout << endl << caesar_IN(text, key, key2, key3, key4, plug) << endl;
             }
             else {
                 // 執行解密
                 cout << endl << text << endl;
-                cout << caesar_OUT(text, key, key2, key3, key4) << endl;
+                cout << endl << caesar_OUT(text, key, key2, key3, key4, plug) << endl;
             }
         }
         else {
