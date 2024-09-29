@@ -243,19 +243,18 @@ static string caesar_IN(string Plaintext, char key, char key2, char key3, char k
     int key_to_Move_4 = int(key4);
 
 
-
     //轉換大寫
     for (int i = 0; i < Plaintext.length(); i++) {
 
-        if (Plaintext[i] == plug[0]) {
-            Plaintext[i] = plugboard_switch(Plaintext[i], plug[1]);
-        }
-        else if (Plaintext[i] == plug[1]) {
-            Plaintext[i] = plugboard_switch(Plaintext[i], plug[0]);
-        }
-
         if (Plaintext[i] >= 97 && Plaintext[i] <= 122) {
             Plaintext[i] -= 32;
+        }
+
+        if (Plaintext[i] == (plug[0] - 32)) {
+            Plaintext[i] = plugboard_switch(Plaintext[i], (plug[1] - 32));
+        }
+        else if (Plaintext[i] == (plug[1] - 32)) {
+            Plaintext[i] = plugboard_switch(Plaintext[i], (plug[0] - 32));
         }
     }
 
